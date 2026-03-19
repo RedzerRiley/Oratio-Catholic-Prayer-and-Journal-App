@@ -191,7 +191,7 @@ export const novenas: Novena[] = [
     days: 9,
     patron: 'St. Carlo Acutis',
     intention: 'For young people, the internet, and those seeking God in modern life',
-    image: '/images/novenas/st-carlo.png',
+    image: '/images/st-carlo.png',
     prayers: Array.from({ length: 9 }, (_, i) =>
       `Dear St. Carlo Acutis, you who used your gifts and talents in service of the Lord and the Gospel, intercede for us that we too may offer all that we are to God.\n\n(Day ${i + 1}) Help us to find God in the digital world and to use modern technology for His glory. Pray for all young people, that they may seek the Eucharist as their "highway to heaven" just as you did. May we, like you, proclaim that it is not we who should follow the trends of the world, but rather bring Christ into every age. Amen.`
     ),
