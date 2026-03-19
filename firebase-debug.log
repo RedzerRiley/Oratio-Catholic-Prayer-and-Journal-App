@@ -1,0 +1,70 @@
+[debug] [2026-03-19T03:16:40.767Z] ----------------------------------------------------------------------
+[debug] [2026-03-19T03:16:40.777Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Redzer\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init
+[debug] [2026-03-19T03:16:40.778Z] CLI Version:   15.11.0
+[debug] [2026-03-19T03:16:40.778Z] Platform:      win32
+[debug] [2026-03-19T03:16:40.778Z] Node Version:  v20.17.0
+[debug] [2026-03-19T03:16:40.778Z] Time:          Thu Mar 19 2026 11:16:40 GMT+0800 (Taipei Standard Time)
+[debug] [2026-03-19T03:16:40.779Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-03-19T03:16:40.782Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  C:\Users\Redzer\Downloads
+
+Before we get started, keep in mind:
+
+  * You are initializing within an existing Firebase project directory
+
+[debug] [2026-03-19T03:16:45.056Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2026-03-19T03:16:45.057Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] 
+[debug] [2026-03-19T03:17:05.989Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-03-19T03:17:05.989Z] > authorizing via signed-in user (redzerriley@gmail.com)
+[debug] [2026-03-19T03:17:05.991Z] Checked if tokens are valid: false, expires at: 1773129959160
+[debug] [2026-03-19T03:17:05.991Z] Checked if tokens are valid: false, expires at: 1773129959160
+[debug] [2026-03-19T03:17:05.991Z] > refreshing access token with scopes: []
+[debug] [2026-03-19T03:17:05.992Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-03-19T03:17:05.993Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-03-19T03:17:06.175Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-03-19T03:17:06.176Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-03-19T03:17:06.222Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/rentcheck2 [none]
+[debug] [2026-03-19T03:17:06.684Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/rentcheck2 200
+[debug] [2026-03-19T03:17:06.684Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/rentcheck2 {"projectId":"rentcheck2","projectNumber":"560797778300","displayName":"RentCheck2","name":"projects/rentcheck2","resources":{"hostingSite":"rentcheck2"},"state":"ACTIVE","etag":"1_4d1ad753-368d-41a6-8ada-97b29cd201c5"}
+[info] i  Using project rentcheck2 (RentCheck2) . 
+[info] 
+=== Hosting Setup
+[debug] [2026-03-19T03:17:06.734Z] Checked if tokens are valid: true, expires at: 1773893825176
+[debug] [2026-03-19T03:17:06.734Z] Checked if tokens are valid: true, expires at: 1773893825176
+[debug] [2026-03-19T03:17:06.735Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/rentcheck2 [none]
+[debug] [2026-03-19T03:17:07.316Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/rentcheck2 200
+[debug] [2026-03-19T03:17:07.317Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/rentcheck2 {"projectId":"rentcheck2","projectNumber":"560797778300","displayName":"RentCheck2","name":"projects/rentcheck2","resources":{"hostingSite":"rentcheck2"},"state":"ACTIVE","etag":"1_4d1ad753-368d-41a6-8ada-97b29cd201c5"}
+[info] 
+[info] Your public directory is the folder (relative to your project directory) that
+[info] will contain Hosting assets to be uploaded with firebase deploy. If you
+[info] have a build process for your assets, use your build's output directory.
+[info] 
+[debug] [2026-03-19T03:17:18.038Z] ExitPromptError: User force closed the prompt with SIGINT
+    at Interface.sigint (C:\Users\Redzer\AppData\Roaming\npm\node_modules\firebase-tools\node_modules\@inquirer\core\dist\commonjs\lib\create-prompt.js:101:37)
+    at Interface.emit (node:events:519:28)
+    at [_ttyWrite] [as _ttyWrite] (node:internal/readline/interface:1126:18)
+    at ReadStream.onkeypress (node:internal/readline/interface:265:20)
+    at ReadStream.emit (node:events:531:35)
+    at emitKeys (node:internal/readline/utils:371:14)
+    at emitKeys.next (<anonymous>)
+    at ReadStream.onData (node:internal/readline/emitKeypressEvents:64:36)
+    at ReadStream.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:559:12)
+[error] 
+[error] Error: An unexpected error has occurred.
