@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { RouterProvider } from 'react-router';
 import { router } from './routes';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
@@ -8,83 +8,92 @@ import { latestVersion } from './data/changelog';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 
-// ─── Inner app — has access to AuthContext ────────────────────
+const SESSION_KEY = 'oratio_session_checked';
+
 function AppInner() {
   const { user, loading } = useAuth();
-  const [showIntro, setShowIntro] = useState(true);
+  const [showIntro, setShowIntro] = useState(false);
   const [showWhatsNew, setShowWhatsNew] = useState(false);
-  const [checked, setChecked] = useState(true);
+  const hasChecked = useRef(false);
 
   useEffect(() => {
-    if (loading) return;
-    if (!user) {
-      // Not logged in — reset so next login shows intro
-      setChecked(true);
-      setShowIntro(false);
-      setShowWhatsNew(false);
+    if (loading || !user || hasChecked.current) return;
+
+    // Already shown this session — skip on hot reload / navigation
+    const sessionDone = sessionStorage.getItem(SESSION_KEY);
+    if (sessionDone === user.uid) {
+      hasChecked.current = true;
       return;
     }
 
-    const checkFirstTime = async () => {
+    hasChecked.current = true;
+
+    const checkMeta = async () => {
       try {
         const ref = doc(db, 'users', user.uid, 'app', 'meta');
         const snap = await getDoc(ref);
 
         if (!snap.exists()) {
-          // Brand new user — show intro first, then What's New
-          await setDoc(ref, { seenVersion: latestVersion.version, seenIntro: true });
+          // Brand new user — show intro immediately, then What's New
           setShowIntro(true);
+          // Save in background — don't await so intro appears instantly
+          setDoc(ref, { seenVersion: latestVersion.version, seenIntro: true });
         } else {
-          const data = snap.data();
-          const seenVersion = data?.seenVersion ?? '0.0.0';
-
-          // Returning user who hasn't seen this version yet
+          const seenVersion = snap.data()?.seenVersion ?? '0.0.0';
           if (seenVersion !== latestVersion.version) {
-            await setDoc(ref, { seenVersion: latestVersion.version }, { merge: true });
+            // Returning user on a new version — show What's New immediately
             setShowWhatsNew(true);
+            setDoc(ref, { seenVersion: latestVersion.version }, { merge: true });
+          } else {
+            // Already up to date — mark session done
+            sessionStorage.setItem(SESSION_KEY, user.uid);
           }
         }
       } catch (err) {
         console.error('Meta check failed:', err);
-      } finally {
-        setChecked(true);
       }
     };
 
-    checkFirstTime();
+    checkMeta();
+  }, [user, loading]);
+
+  // Reset on logout
+  useEffect(() => {
+    if (!loading && !user) {
+      hasChecked.current = false;
+      setShowIntro(false);
+      setShowWhatsNew(false);
+    }
   }, [user, loading]);
 
   const handleIntroComplete = () => {
     setShowIntro(false);
-    // After intro, show What's New for new users too
     setShowWhatsNew(true);
   };
 
   const handleWhatsNewClose = () => {
     setShowWhatsNew(false);
+    if (user) sessionStorage.setItem(SESSION_KEY, user.uid);
   };
 
   return (
     <>
       <RouterProvider router={router} />
 
-      {/* Intro splash — shown to brand new users */}
-      {checked && showIntro && (
+      {showIntro && (
         <IntroScreen
           onComplete={handleIntroComplete}
           userName={user?.displayName?.split(' ')[0]}
         />
       )}
 
-      {/* What's New — shown after intro (new users) or on version update (returning users) */}
-      {checked && !showIntro && showWhatsNew && (
+      {!showIntro && showWhatsNew && (
         <WhatsNewPopup onClose={handleWhatsNewClose} />
       )}
     </>
   );
 }
 
-// ─── Root app with providers ──────────────────────────────────
 export default function App() {
   return (
     <AuthProvider>
