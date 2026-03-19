@@ -11,9 +11,9 @@ import { db } from '../lib/firebase';
 // ─── Inner app — has access to AuthContext ────────────────────
 function AppInner() {
   const { user, loading } = useAuth();
-  const [showIntro, setShowIntro] = useState(false);
+  const [showIntro, setShowIntro] = useState(true);
   const [showWhatsNew, setShowWhatsNew] = useState(false);
-  const [checked, setChecked] = useState(false);
+  const [checked, setChecked] = useState(true);
 
   useEffect(() => {
     if (loading) return;
