@@ -21,11 +21,42 @@ export type ChangelogEntry = {
 
 export const versions: ChangelogEntry[] = [
   {
+    version: '1.1.0',
+    date: 'March 31, 2026',
+    title: 'Animations & Polish ✨',
+    description: 'Added beautiful animations, soothing chimes, and quality-of-life improvements across the app.',
+    latest: true,
+    changes: [
+      {
+        category: 'New',
+        items: [
+          'Novena Reset — added a subtle reset button to clear your novena progress and start over',
+          'Prayer Animations & Sounds — added delightful particle animations and soothing bell chimes when completing daily prayers, rosaries, and novenas',
+          'What\'s New Access — added a dedicated "?" button on the Home screen header to view the latest updates anytime',
+        ],
+      },
+      {
+        category: 'Improved',
+        items: [
+          'Novena Images — upgraded the hero image layout with a blurred background fill technique so all images fit perfectly without stretching or cropping',
+          'Daily Prayers Design — updated the header to match the app\'s rounded design language with a flush search bar',
+          'Update Popup — the What\'s New popup now reliably shows for returning users on login (once per session)',
+        ],
+      },
+      {
+        category: 'Fixed',
+        items: [
+          'Visual Glitches — fixed an issue with the new animations creating a white dot by properly clipping particles to the button bounds',
+        ],
+      },
+    ],
+  },
+  {
     version: '1.0.0',
     date: 'March 19, 2026',
     title: 'Initial Release 🎉',
     description: 'Oratio is here — your personal Catholic companion for daily prayer, devotion, and spiritual growth.',
-    latest: true,
+    latest: false,
     changes: [
       {
         category: 'New',
@@ -48,26 +79,6 @@ export const versions: ChangelogEntry[] = [
       },
     ],
   },
-
-  // ── ADD NEW VERSIONS ABOVE THIS LINE ─────────────────────────
-  // Example:
-  // {
-  //   version: '1.1.0',
-  //   date: 'April 1, 2026',
-  //   title: 'Spring Update 🌸',
-  //   description: 'New features and improvements for the Easter season.',
-  //   latest: true,   ← set this to true, set 1.0.0 latest to false
-  //   changes: [
-  //     {
-  //       category: 'New',
-  //       items: ['Push notifications for daily prayer reminders'],
-  //     },
-  //     {
-  //       category: 'Improved',
-  //       items: ['Faster loading times across all pages'],
-  //     },
-  //   ],
-  // },
 ];
 
 export const latestVersion = versions.find(v => v.latest) ?? versions[0];

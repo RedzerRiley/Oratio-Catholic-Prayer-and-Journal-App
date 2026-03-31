@@ -367,7 +367,7 @@ export default function Profile() {
         </button>
 
         <p className="text-center text-xs text-gray-400 pb-4">
-          Oratio v1.0 · Made with 🙏
+          Oratio v1.1.0 · Made with 🙏
         </p>
       </div>
 

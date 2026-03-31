@@ -93,8 +93,8 @@ Let us pray: Pour forth, we beseech Thee, O Lord, Thy grace into our hearts; tha
 // NOVENAS
 // To add a new novena:
 //   1. Add an entry to the `novenas` array below with all fields filled in
-//   2. Add your image to public/images/novenas/<id>.png  (or .jpg)
-//      — The `image` field should be '/images/novenas/<id>.png'
+//   2. Add your image to public/images/<id>.png  (or .jpg)
+//      — The `image` field should be '/images/<id>.png'
 //      — For external URLs just paste the full https:// link instead
 //   3. Add day-by-day prayers to the `prayers` array (9 strings, one per day)
 // ─────────────────────────────────────────────────────────────
@@ -119,7 +119,7 @@ export const novenas: Novena[] = [
     days: 9,
     patron: 'Jesus Christ',
     intention: 'For the souls in purgatory and sinners',
-    image: '/images/novenas/divine-mercy.png',
+    image: '/images/divine-mercy.png',
     prayers: Array.from({ length: 9 }, (_, i) =>
       `Eternal Father, I offer You the Body and Blood, Soul and Divinity of Your dearly beloved Son, Our Lord Jesus Christ, in atonement for our sins and those of the whole world. For the sake of His sorrowful Passion, have mercy on us and on the whole world.\n\n(Day ${i + 1} intention) Eternal God, in whom mercy is endless and the treasury of compassion inexhaustible, look kindly upon us and increase Your mercy in us, that in difficult moments we might not despair nor become despondent, but with great confidence submit ourselves to Your holy will, which is Love and Mercy itself. Amen.`
     ),
@@ -131,7 +131,7 @@ export const novenas: Novena[] = [
     days: 9,
     patron: 'Jesus Christ',
     intention: 'For spiritual renewal and devotion',
-    image: '/images/novenas/sacred-heart.png',
+    image: '/images/sacred-heart.png',
     prayers: Array.from({ length: 9 }, (_, i) =>
       `O most holy Heart of Jesus, fountain of every blessing, I adore You, I love You, and with a lively sorrow for my sins, I offer You this poor heart of mine. Make me humble, patient, pure, and wholly obedient to Your will. Grant, good Jesus, that I may live in You and for You.\n\n(Day ${i + 1}) Protect me in the midst of danger; comfort me in my afflictions; give me health of body, assistance in my temporal needs, Your blessing on all that I do, and the grace of a holy death. Amen.`
     ),
@@ -143,7 +143,7 @@ export const novenas: Novena[] = [
     days: 9,
     patron: 'Blessed Virgin Mary',
     intention: 'For help in times of need',
-    image: '/images/novenas/our-lady-perpetual-help.png',
+    image: '/images/our-lady-perpetual-help.png',
     prayers: Array.from({ length: 9 }, (_, i) =>
       `O Mother of Perpetual Help, grant that I may ever invoke your most powerful name, which is the safeguard of the living and the salvation of the dying. O Purest Mary, O Sweetest Mary, let your name henceforth be ever on my lips.\n\n(Day ${i + 1}) Delay not, O Blessed Lady, to help me whenever I call on you, for, in all my needs, in all my temptations, I shall never cease to call on you, ever repeating your sacred name, Mary, Mary. Amen.`
     ),
@@ -155,7 +155,7 @@ export const novenas: Novena[] = [
     days: 9,
     patron: 'St. Jude Thaddeus',
     intention: 'For difficult situations and lost causes',
-    image: '/images/novenas/st-jude.png',
+    image: '/images/st-jude.png',
     prayers: Array.from({ length: 9 }, (_, i) =>
       `Most holy Apostle, St. Jude Thaddeus, faithful servant and friend of Jesus, the Church honors and invokes you universally, as the patron of hopeless cases, of things almost despaired of.\n\n(Day ${i + 1}) Pray for me, I am so helpless and alone. Please bring visible and speedy help where help is almost despaired of. Come to my assistance in this great need that I may receive the consolation and help of heaven as I work with my challenges. I will always honor you as my special and powerful patron and encourage devotion to you. Amen.`
     ),
@@ -167,7 +167,7 @@ export const novenas: Novena[] = [
     days: 9,
     patron: 'St. Joseph',
     intention: 'For families and workers',
-    image: '/images/novenas/st-joseph.png',
+    image: '/images/st-joseph.png',
     prayers: Array.from({ length: 9 }, (_, i) =>
       `Oh, St. Joseph, whose protection is so great, so strong, so prompt before the throne of God, I place in you all my interests and desires.\n\n(Day ${i + 1}) Oh, St. Joseph, do assist me by your powerful intercession and obtain for me from your Divine Son all spiritual blessings through Jesus Christ, Our Lord; so that having engaged here below your heavenly power, I may offer my thanksgiving and homage to the most loving of Fathers. Amen.`
     ),
@@ -179,7 +179,7 @@ export const novenas: Novena[] = [
     days: 9,
     patron: 'Holy Spirit',
     intention: 'For gifts of the Holy Spirit',
-    image: '/images/novenas/holy-spirit.png',
+    image: '/images/holy-spirit.png',
     prayers: Array.from({ length: 9 }, (_, i) =>
       `Come, Holy Spirit, fill the hearts of Your faithful and kindle in them the fire of Your love. Send forth Your Spirit and they shall be created and You shall renew the face of the earth.\n\n(Day ${i + 1}) O God, who by the light of the Holy Spirit did instruct the hearts of the faithful, grant that by the same Holy Spirit we may be truly wise and ever rejoice in His consolations, through Christ Our Lord. Amen.`
     ),
@@ -206,7 +206,7 @@ export const novenas: Novena[] = [
   //   days: 9,
   //   patron: 'St. Thérèse of Lisieux',
   //   intention: 'For missionaries and those who suffer',
-  //   image: '/images/novenas/st-therese.png',
+  //   image: '/images/st-therese.png',
   //   prayers: Array.from({ length: 9 }, (_, i) => `Your prayer text here. Day ${i + 1}.`),
   // },
 ];
@@ -303,4 +303,124 @@ export const bibleQuotes = [
     reference: 'Matthew 7:7',
     category: 'Faith',
   },
+  {
+    id: 11,
+    text: 'For I know well the plans I have in mind for you, says the LORD, plans for your welfare, not for woe! plans to give you a future full of hope.',
+    reference: 'Jeremiah 29:11',
+    category: 'Hope',
+  },
+  {
+    id: 12,
+    text: 'We know that all things work for good for those who love God, who are called according to his purpose.',
+    reference: 'Romans 8:28',
+    category: 'Faith',
+  },
+  {
+    id: 13,
+    text: 'Do not fear: I am with you; do not be anxious: I am your God. I will strengthen you, I will help you, I will uphold you with my victorious right hand.',
+    reference: 'Isaiah 41:10',
+    category: 'Courage',
+  },
+  {
+    id: 14,
+    text: 'Your word is a lamp for my feet, a light for my path.',
+    reference: 'Psalm 119:105',
+    category: 'Wisdom',
+  },
+  {
+    id: 15,
+    text: 'I command you: be firm and steadfast! Do not fear nor be dismayed, for the LORD, your God, is with you wherever you go.',
+    reference: 'Joshua 1:9',
+    category: 'Courage',
+  },
+  {
+    id: 16,
+    text: 'We love because he first loved us.',
+    reference: '1 John 4:19',
+    category: 'Love',
+  },
+  {
+    id: 17,
+    text: 'Do not conform yourselves to this age but be transformed by the renewal of your mind, that you may discern what is the will of God, what is good and pleasing and perfect.',
+    reference: 'Romans 12:2',
+    category: 'Wisdom',
+  },
+  {
+    id: 18,
+    text: 'God is our refuge and our strength, an ever-present help in distress.',
+    reference: 'Psalm 46:2',
+    category: 'Strength',
+  },
+  {
+    id: 19,
+    text: 'But seek first the kingdom of God and his righteousness, and all these things will be given you besides.',
+    reference: 'Matthew 6:33',
+    category: 'Faith',
+  },
+  {
+    id: 20,
+    text: 'Faith is the realization of what is hoped for and evidence of things not seen.',
+    reference: 'Hebrews 11:1',
+    category: 'Faith',
+  },
+  {
+    id: 21,
+    text: 'For we walk by faith, not by sight.',
+    reference: '2 Corinthians 5:7',
+    category: 'Faith',
+  },
+  {
+    id: 22,
+    text: 'May the God of hope fill you with all joy and peace in believing, so that you may abound in hope by the power of the holy Spirit.',
+    reference: 'Romans 15:13',
+    category: 'Hope',
+  },
+  {
+    id: 23,
+    text: 'But if any of you lacks wisdom, he should ask God who gives to all generously and ungrudgingly, and he will be given it.',
+    reference: 'James 1:5',
+    category: 'Wisdom',
+  },
+  {
+    id: 24,
+    text: 'Cast all your worries upon him because he cares for you.',
+    reference: '1 Peter 5:7',
+    category: 'Comfort',
+  },
+  {
+    id: 25,
+    text: 'This is the day the LORD has made; let us rejoice in it and be glad.',
+    reference: 'Psalm 118:24',
+    category: 'Joy',
+  },
+  {
+    id: 26,
+    text: 'For by grace you have been saved through faith, and this is not from you; it is the gift of God.',
+    reference: 'Ephesians 2:8',
+    category: 'Faith',
+  },
+  {
+    id: 27,
+    text: 'And over all these put on love, that is, the bond of perfection.',
+    reference: 'Colossians 3:14',
+    category: 'Love',
+  },
+  {
+    id: 28,
+    text: 'The LORD’s acts of mercy are not exhausted, his compassion is not spent; They are renewed each morning—great is your faithfulness!',
+    reference: 'Lamentations 3:22-23',
+    category: 'Hope',
+  },
+  {
+    id: 29,
+    text: 'You have been told, O mortal, what is good, and what the LORD requires of you: Only to do justice and to love goodness, and to walk humbly with your God.',
+    reference: 'Micah 6:8',
+    category: 'Wisdom',
+  },
+  {
+    id: 30,
+    text: 'Rejoice in the Lord always. I shall say it again: rejoice!',
+    reference: 'Philippians 4:4',
+    category: 'Joy',
+  }
 ];

@@ -39,10 +39,9 @@ export default function IntroScreen({ onComplete, userName }: Props) {
 
   return (
     <div
-      className={`fixed inset-0 z-[100] flex flex-col items-center justify-center px-8 transition-opacity duration-700 ${
+      className={`fixed inset-0 z-[100] flex flex-col items-center justify-center px-8 transition-opacity duration-700 bg-[#0474c0] ${
         fadeOut ? 'opacity-0' : visible ? 'opacity-100' : 'opacity-0'
       }`}
-      style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 30%, #4c1d95 60%, #6d28d9 100%)' }}
     >
       {/* Subtle animated background particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -113,7 +112,7 @@ export default function IntroScreen({ onComplete, userName }: Props) {
           }`}
           style={{ transitionDelay: '100ms' }}
         >
-          <p className="text-purple-200 text-lg mt-3 leading-relaxed">
+          <p className="text-blue-100 text-lg mt-3 leading-relaxed">
             Your Catholic companion<br />prayer app
           </p>
         </div>
@@ -145,11 +144,11 @@ export default function IntroScreen({ onComplete, userName }: Props) {
         >
           <button
             onClick={handleProceed}
-            className="w-full bg-white text-purple-700 font-bold text-lg rounded-2xl py-4 shadow-2xl active:scale-98 transition-all hover:bg-amber-50"
+            className="w-full bg-white text-[#0474c0] font-bold text-lg rounded-2xl py-4 shadow-2xl active:scale-98 transition-all hover:bg-amber-50"
           >
             Begin ✝️
           </button>
-          <p className="text-purple-300/60 text-xs mt-4 italic">
+          <p className="text-blue-200/60 text-xs mt-4 italic">
             "Ask and it will be given to you." — Matthew 7:7
           </p>
         </div>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Navigation } from '../components/Navigation';
 import { rosaryMysteries, dailyPrayers } from '../data/prayers';
 import { Sparkles, ChevronRight, ChevronLeft, X, Award, BookOpen } from 'lucide-react';
@@ -93,6 +93,64 @@ function DecadeStep({ step, mysteryColor, onDecadeComplete }: {
   );
 }
 
+// ── Shared audio + particle helpers ─────────────────────────
+
+const playChime = (type: 'begin' | 'complete') => {
+  try {
+    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    // Begin: short ascending two-note chime (soft & reverent)
+    // Complete: full ascending four-note chime (C5 E5 G5 C6)
+    const freqSets = {
+      begin: [523.25, 783.99],
+      complete: [523.25, 659.25, 783.99, 1046.5],
+    };
+    freqSets[type].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const startTime = ctx.currentTime + i * 0.13;
+      gain.gain.setValueAtTime(0, startTime);
+      gain.gain.linearRampToValueAtTime(0.18, startTime + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.9);
+      osc.start(startTime);
+      osc.stop(startTime + 0.9);
+    });
+  } catch (_) {}
+};
+
+type Particle = { id: number; color: string; angle: number };
+
+function usePopButton(onAfter?: () => void, delay = 650) {
+  const [popping, setPopping] = useState(false);
+  const [particles, setParticles] = useState<Particle[]>([]);
+  const idRef = useRef(0);
+
+  const trigger = useCallback((colors: string[], chime: 'begin' | 'complete') => {
+    if (popping) return;
+    setPopping(true);
+    playChime(chime);
+    setParticles(
+      Array.from({ length: 16 }, (_, i) => ({
+        id: idRef.current++,
+        color: colors[i % colors.length],
+        angle: (i / 16) * 360,
+      }))
+    );
+    setTimeout(() => {
+      setPopping(false);
+      setParticles([]);
+      onAfter?.();
+    }, delay);
+  }, [popping, onAfter, delay]);
+
+  return { popping, particles, trigger };
+}
+
+// ── Main component ────────────────────────────────────────────
+
 export default function Rosary() {
   const { user } = useAuth();
   const [selectedMystery, setSelectedMystery] = useState<MysteryType>(getMysteryForToday());
@@ -129,7 +187,12 @@ export default function Rosary() {
     load();
   }, [user]);
 
-  const handleCompleteRosary = async () => {
+  const doBegin = useCallback(() => {
+    setStepIndex(0);
+    setShowGuide(true);
+  }, []);
+
+  const doComplete = useCallback(async () => {
     const newCount = rosaryCount + 1;
     setRosaryCount(newCount);
     if (user) {
@@ -141,7 +204,21 @@ export default function Rosary() {
     if (STREAK_MILESTONES.includes(newCount)) setShowMilestone(newCount);
     setShowGuide(false);
     setStepIndex(0);
+  }, [rosaryCount, user]);
+
+  // Mystery-tinted particle colours for Begin button
+  const mysteryParticleColors: Record<MysteryType, string[]> = {
+    joyful:   ['#eab308', '#fde68a', '#fbbf24', '#ffffff', '#fef9c3'],
+    luminous: ['#3b82f6', '#93c5fd', '#60a5fa', '#ffffff', '#dbeafe'],
+    sorrowful:['#a855f7', '#d8b4fe', '#c084fc', '#ffffff', '#f3e8ff'],
+    glorious: ['#ec4899', '#fbcfe8', '#f472b6', '#ffffff', '#fce7f3'],
   };
+
+  const beginColors = mysteryParticleColors[selectedMystery];
+  const completeColors = ['#a855f7', '#d8b4fe', '#fbbf24', '#ffffff', '#c084fc', '#fde68a'];
+
+  const beginPop = usePopButton(doBegin, 500);
+  const completePop = usePopButton(doComplete, 700);
 
   const handleNext = () => { if (stepIndex < steps.length - 1) setStepIndex(stepIndex + 1); };
   const handleBack = () => { if (stepIndex > 0) setStepIndex(stepIndex - 1); };
@@ -207,24 +284,48 @@ export default function Rosary() {
             ) : null;
           })()}
 
-          {/* Start button */}
-          <button
-            onClick={() => { setStepIndex(0); setShowGuide(true); }}
-            className="w-full px-6 py-4 flex items-center justify-between group hover:bg-gray-50 transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              <div className={`${mysteryMeta.color} rounded-xl p-2.5`}>
-                <BookOpen className="w-5 h-5 text-white" />
+          {/* Begin Praying button */}
+          <div className="relative">
+            {beginPop.particles.map((p) => (
+              <span
+                key={p.id}
+                className="absolute pointer-events-none rounded-full z-10"
+                style={{
+                  width: 8, height: 8,
+                  background: p.color,
+                  left: '50%', top: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  animation: 'rosary-particle 0.55s ease-out forwards',
+                  ['--angle' as any]: `${p.angle}deg`,
+                }}
+              />
+            ))}
+            <button
+              onClick={() => beginPop.trigger(beginColors, 'begin')}
+              className="w-full px-6 py-4 flex items-center justify-between group hover:bg-gray-50 transition-colors"
+              style={{
+                transform: beginPop.popping ? 'scale(0.95)' : 'scale(1)',
+                transition: beginPop.popping
+                  ? 'transform 0.08s ease-in'
+                  : 'transform 0.3s cubic-bezier(0.34,1.56,0.64,1)',
+              }}
+            >
+              <div className="flex items-center gap-3">
+                <div className={`${mysteryMeta.color} rounded-xl p-2.5`}>
+                  <BookOpen className="w-5 h-5 text-white" />
+                </div>
+                <div className="text-left">
+                  <p className="font-semibold text-gray-800">
+                    {beginPop.popping ? '✨ Beginning...' : 'Begin Praying'}
+                  </p>
+                  <p className="text-xs text-gray-500">Step-by-step · {mysteryMeta.name}</p>
+                </div>
               </div>
-              <div className="text-left">
-                <p className="font-semibold text-gray-800">Begin Praying </p>
-                <p className="text-xs text-gray-500">Step-by-step · {mysteryMeta.name}</p>
+              <div className={`${mysteryMeta.color} rounded-full p-1.5`}>
+                <ChevronRight className="w-4 h-4 text-white" />
               </div>
-            </div>
-            <div className={`${mysteryMeta.color} rounded-full p-1.5`}>
-              <ChevronRight className="w-4 h-4 text-white" />
-            </div>
-          </button>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -297,9 +398,34 @@ export default function Rosary() {
 
           <div className="px-6 pb-20 pt-4 border-t border-gray-100">
             {currentStep.type === 'complete' ? (
-              <button onClick={handleCompleteRosary} className="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-2xl py-4 font-bold text-lg shadow-lg active:scale-98">
-                🌹 Save & Complete
-              </button>
+              <div className="relative">
+                {completePop.particles.map((p) => (
+                  <span
+                    key={p.id}
+                    className="absolute pointer-events-none rounded-full z-10"
+                    style={{
+                      width: 9, height: 9,
+                      background: p.color,
+                      left: '50%', top: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      animation: 'rosary-particle 0.65s ease-out forwards',
+                      ['--angle' as any]: `${p.angle}deg`,
+                    }}
+                  />
+                ))}
+                <button
+                  onClick={() => completePop.trigger(completeColors, 'complete')}
+                  className="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-2xl py-4 font-bold text-lg shadow-lg"
+                  style={{
+                    transform: completePop.popping ? 'scale(0.92)' : 'scale(1)',
+                    transition: completePop.popping
+                      ? 'transform 0.08s ease-in'
+                      : 'transform 0.3s cubic-bezier(0.34,1.56,0.64,1)',
+                  }}
+                >
+                  {completePop.popping ? '✨ Saved! ✨' : '🌹 Save & Complete'}
+                </button>
+              </div>
             ) : currentStep.type === 'decade' ? null : (
               <div className="flex gap-3">
                 {stepIndex > 0 && (
@@ -338,6 +464,15 @@ export default function Rosary() {
           </div>
         </div>
       )}
+
+      {/* Particle keyframe styles */}
+      <style>{`
+        @keyframes rosary-particle {
+          0%   { transform: translate(-50%, -50%) rotate(var(--angle)) translateX(0px) scale(1); opacity: 1; }
+          60%  { opacity: 0.9; }
+          100% { transform: translate(-50%, -50%) rotate(var(--angle)) translateX(58px) scale(0); opacity: 0; }
+        }
+      `}</style>
 
       <Navigation />
     </div>

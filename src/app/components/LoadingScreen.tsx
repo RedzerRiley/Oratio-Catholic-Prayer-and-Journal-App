@@ -2,7 +2,7 @@ import { Cross } from 'lucide-react';
 
 export default function LoadingScreen() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-900 via-purple-800 to-amber-900 flex flex-col items-center justify-center relative overflow-hidden">
+    <div className="min-h-screen bg-[#0474c0] flex flex-col items-center justify-center relative overflow-hidden">
       {/* Background cross pattern */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-5">
         {Array.from({ length: 12 }).map((_, i) => (
@@ -26,7 +26,7 @@ export default function LoadingScreen() {
         </div>
 
         <h1 className="text-4xl font-serif text-white mb-2 tracking-wide">Oratio</h1>
-        <p className="text-purple-200 text-sm mb-12">Your Catholic companion</p>
+        <p className="text-blue-100 text-sm mb-12">Your Catholic companion</p>
 
         {/* Animated dots */}
         <div className="flex gap-2">
@@ -41,7 +41,7 @@ export default function LoadingScreen() {
       </div>
 
       {/* Bottom quote */}
-      <p className="absolute bottom-12 text-purple-300 text-xs px-8 text-center italic z-10">
+      <p className="absolute bottom-12 text-blue-200 text-xs px-8 text-center italic z-10">
         "Ask and it will be given to you; seek and you will find." — Matthew 7:7
       </p>
     </div>

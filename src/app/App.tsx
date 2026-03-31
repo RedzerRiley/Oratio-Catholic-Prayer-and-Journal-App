@@ -41,13 +41,11 @@ function AppInner() {
         } else {
           const seenVersion = snap.data()?.seenVersion ?? '0.0.0';
           if (seenVersion !== latestVersion.version) {
-            // Returning user on a new version — show What's New immediately
-            setShowWhatsNew(true);
+            // Returning user on a new version — update stored version
             setDoc(ref, { seenVersion: latestVersion.version }, { merge: true });
-          } else {
-            // Already up to date — mark session done
-            sessionStorage.setItem(SESSION_KEY, user.uid);
           }
+          // Always show What's New on every login (once per session)
+          setShowWhatsNew(true);
         }
       } catch (err) {
         console.error('Meta check failed:', err);

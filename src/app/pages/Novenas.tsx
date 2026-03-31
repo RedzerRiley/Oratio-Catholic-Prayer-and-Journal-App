@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { Navigation } from '../components/Navigation';
 import { novenas, Novena } from '../data/prayers';
-import { Cross, Calendar, Heart, ChevronRight, BookOpen, CheckCircle, Lock } from 'lucide-react';
+import { Cross, Calendar, Heart, ChevronRight, BookOpen, CheckCircle, Lock, RotateCcw } from 'lucide-react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 
 // ─── Date helpers ────────────────────────────────────────────
@@ -31,6 +31,10 @@ const saveProgress = (novenaId: string, progress: NovenaProgress) => {
   localStorage.setItem(`novena_progress_${novenaId}`, JSON.stringify(progress));
 };
 
+const deleteProgress = (novenaId: string) => {
+  localStorage.removeItem(`novena_progress_${novenaId}`);
+};
+
 // ─── Day status helper ───────────────────────────────────────
 const getDayStatus = (novenaId: string, day: number): 'completed' | 'available' | 'locked' => {
   const progress = getProgress(novenaId);
@@ -49,24 +53,103 @@ const getUnlockDateDisplay = (novenaId: string, day: number) => {
     .toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 };
 
+// ─── Audio + particle helpers ────────────────────────────────
+
+const playNovenaChime = (type: 'day' | 'complete') => {
+  try {
+    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    // day: soft 2-note chime; complete: full 4-note ascending chime
+    const freqs = type === 'day'
+      ? [523.25, 783.99]
+      : [523.25, 659.25, 783.99, 1046.5];
+    freqs.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const t = ctx.currentTime + i * 0.13;
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(0.18, t + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.9);
+      osc.start(t);
+      osc.stop(t + 0.9);
+    });
+  } catch (_) {}
+};
+
+type Particle = { id: number; color: string; angle: number };
+
+function usePopButton(onAfter?: () => void, delay = 650) {
+  const [popping, setPop] = useState(false);
+  const [particles, setParticles] = useState<Particle[]>([]);
+  const idRef = useRef(0);
+
+  const trigger = useCallback((colors: string[], chime: 'day' | 'complete') => {
+    if (popping) return;
+    setPop(true);
+    playNovenaChime(chime);
+    setParticles(
+      Array.from({ length: 16 }, (_, i) => ({
+        id: idRef.current++,
+        color: colors[i % colors.length],
+        angle: (i / 16) * 360,
+      }))
+    );
+    setTimeout(() => {
+      setPop(false);
+      setParticles([]);
+      onAfter?.();
+    }, delay);
+  }, [popping, onAfter, delay]);
+
+  return { popping, particles, trigger };
+}
+
+const AMBER_COLORS = ['#f59e0b', '#fbbf24', '#fde68a', '#ffffff', '#fed7aa', '#fdba74'];
+const COMPLETE_COLORS = ['#f59e0b', '#fbbf24', '#a3e635', '#ffffff', '#86efac', '#fde68a'];
+
 // ─── Component ───────────────────────────────────────────────
 export default function Novenas() {
   const [selectedNovena, setSelectedNovena] = useState<Novena | null>(null);
   const [screen, setScreen] = useState<Screen>('list');
   const [activeDay, setActiveDay] = useState(1);
   const [completedDay, setCompletedDay] = useState(1);
+  const [confirmReset, setConfirmReset] = useState(false);
 
-  const handleSelectNovena = (novena: Novena) => { setSelectedNovena(novena); setScreen('detail'); };
+  // Refs so pop callbacks always see latest values
+  const selectedNovenaRef = useRef(selectedNovena);
+  selectedNovenaRef.current = selectedNovena;
+  const activeDayRef = useRef(activeDay);
+  activeDayRef.current = activeDay;
+
+  const prayPop = usePopButton(
+    useCallback(() => {
+      if (!selectedNovenaRef.current) return;
+      const today = getTodayStr();
+      let progress = getProgress(selectedNovenaRef.current.id) ?? { startDate: today, completedDays: [] };
+      if (!progress.completedDays.includes(activeDayRef.current)) progress.completedDays.push(activeDayRef.current);
+      saveProgress(selectedNovenaRef.current.id, progress);
+      setCompletedDay(activeDayRef.current);
+      setScreen('completed');
+    }, []),
+    600
+  );
+
+  const completePop = usePopButton(
+    useCallback(() => setScreen('detail'), []),
+    700
+  );
+
+  const handleSelectNovena = (novena: Novena) => { setSelectedNovena(novena); setScreen('detail'); setConfirmReset(false); };
   const handleStartDay = (day: number) => { setActiveDay(day); setScreen('prayer'); };
 
-  const handleFinishPrayer = () => {
-    if (!selectedNovena) return;
-    const today = getTodayStr();
-    let progress = getProgress(selectedNovena.id) ?? { startDate: today, completedDays: [] };
-    if (!progress.completedDays.includes(activeDay)) progress.completedDays.push(activeDay);
-    saveProgress(selectedNovena.id, progress);
-    setCompletedDay(activeDay);
-    setScreen('completed');
+  const handleResetNovena = () => {
+    if (!selectedNovenaRef.current) return;
+    deleteProgress(selectedNovenaRef.current.id);
+    setConfirmReset(false);
+    setScreen('detail');
   };
 
   // ── PRAYER SCREEN ───────────────────────────────────────────
@@ -119,15 +202,39 @@ export default function Novenas() {
 
         <div className="fixed bottom-20 left-0 right-0 px-6">
           <div className="max-w-md mx-auto">
-            <button
-              onClick={handleFinishPrayer}
-              className="w-full bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-2xl py-4 font-semibold shadow-xl hover:shadow-2xl transition-all active:scale-98 flex items-center justify-center gap-2"
-            >
-              <CheckCircle className="w-5 h-5" />
-              I have prayed — Complete Day {activeDay}
-            </button>
+            <div className="relative overflow-hidden rounded-2xl">
+              {prayPop.particles.map((p) => (
+                <span
+                  key={p.id}
+                  className="absolute pointer-events-none rounded-full z-10"
+                  style={{
+                    width: 8, height: 8,
+                    background: p.color,
+                    left: '50%', top: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    animation: 'novena-particle 0.6s ease-out forwards',
+                    ['--angle' as any]: `${p.angle}deg`,
+                  }}
+                />
+              ))}
+              <button
+                onClick={() => prayPop.trigger(AMBER_COLORS, 'day')}
+                className="w-full bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-2xl py-4 font-semibold shadow-xl hover:shadow-2xl flex items-center justify-center gap-2"
+                style={{
+                  transform: prayPop.popping ? 'scale(0.93)' : 'scale(1)',
+                  transition: prayPop.popping
+                    ? 'transform 0.08s ease-in'
+                    : 'transform 0.3s cubic-bezier(0.34,1.56,0.64,1)',
+                }}
+              >
+                <CheckCircle className="w-5 h-5" />
+                {prayPop.popping ? '✨ Prayer received ✨' : `I have prayed — Complete Day ${activeDay}`}
+              </button>
+            </div>
           </div>
         </div>
+        {/* Particle keyframe */}
+        <style>{`@keyframes novena-particle{0%{transform:translate(-50%,-50%) rotate(var(--angle)) translateX(0px) scale(1);opacity:1;}60%{opacity:.9;}100%{transform:translate(-50%,-50%) rotate(var(--angle)) translateX(56px) scale(0);opacity:0;}}`}</style>
         <Navigation />
       </div>
     );
@@ -160,13 +267,40 @@ export default function Novenas() {
               Come back tomorrow to continue Day {completedDay + 1} 🙏
             </p>
           )}
-          <button
-            onClick={() => setScreen('detail')}
-            className="mt-8 w-full bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-2xl py-4 font-semibold shadow-lg hover:shadow-xl transition-all active:scale-98"
-          >
-            Back to Novena
-          </button>
+          <div className="relative mt-8 w-full overflow-hidden rounded-2xl">
+            {completePop.particles.map((p) => (
+              <span
+                key={p.id}
+                className="absolute pointer-events-none rounded-full z-10"
+                style={{
+                  width: 9, height: 9,
+                  background: p.color,
+                  left: '50%', top: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  animation: 'novena-particle 0.65s ease-out forwards',
+                  ['--angle' as any]: `${p.angle}deg`,
+                }}
+              />
+            ))}
+            <button
+              onClick={() => completePop.trigger(
+                allDone ? COMPLETE_COLORS : AMBER_COLORS,
+                allDone ? 'complete' : 'day'
+              )}
+              className="w-full bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-2xl py-4 font-semibold shadow-lg hover:shadow-xl"
+              style={{
+                transform: completePop.popping ? 'scale(0.93)' : 'scale(1)',
+                transition: completePop.popping
+                  ? 'transform 0.08s ease-in'
+                  : 'transform 0.3s cubic-bezier(0.34,1.56,0.64,1)',
+              }}
+            >
+              {completePop.popping ? '✨ Blessed! ✨' : 'Back to Novena'}
+            </button>
+          </div>
         </div>
+        {/* Particle keyframe */}
+        <style>{`@keyframes novena-particle{0%{transform:translate(-50%,-50%) rotate(var(--angle)) translateX(0px) scale(1);opacity:1;}60%{opacity:.9;}100%{transform:translate(-50%,-50%) rotate(var(--angle)) translateX(56px) scale(0);opacity:0;}}`}</style>
         <Navigation />
       </div>
     );
@@ -178,11 +312,21 @@ export default function Novenas() {
 
     return (
       <div className="min-h-screen bg-gradient-to-b from-amber-50 to-white pb-20">
-        <div className="relative">
-          <div className="h-64 overflow-hidden">
-            <ImageWithFallback src={selectedNovena.image} alt={selectedNovena.title} className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/70" />
-          </div>
+        <div className="relative h-72 overflow-hidden">
+          {/* Blurred background fill */}
+          <ImageWithFallback
+            src={selectedNovena.image}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover object-center"
+            style={{ filter: 'blur(18px)', transform: 'scale(1.15)' }}
+          />
+          {/* Sharp centred image on top */}
+          <ImageWithFallback
+            src={selectedNovena.image}
+            alt={selectedNovena.title}
+            className="absolute inset-0 w-full h-full object-contain object-center"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/70" />
           <button onClick={() => setScreen('list')} className="absolute top-6 left-6 bg-white/90 rounded-full p-2 hover:bg-white transition-colors">
             <ChevronRight className="w-6 h-6 rotate-180 text-gray-800" />
           </button>
@@ -214,7 +358,40 @@ export default function Novenas() {
             <p className="text-gray-700">{selectedNovena.intention}</p>
           </div>
 
-          <h3 className="font-semibold text-gray-800 mb-3">Your Progress</h3>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-semibold text-gray-800">Your Progress</h3>
+            {progress && progress.completedDays.length > 0 && !confirmReset && (
+              <button
+                onClick={() => setConfirmReset(true)}
+                className="flex items-center gap-1 text-xs text-gray-400 hover:text-red-400 transition-colors"
+              >
+                <RotateCcw className="w-3 h-3" />
+                Reset
+              </button>
+            )}
+          </div>
+
+          {confirmReset && (
+            <div className="bg-red-50 border border-red-100 rounded-2xl p-4 mb-4">
+              <p className="text-sm text-gray-700 font-medium mb-1">Reset this novena?</p>
+              <p className="text-xs text-gray-500 mb-3">All progress will be lost and you'll start from Day 1.</p>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleResetNovena}
+                  className="flex-1 bg-red-500 text-white rounded-xl py-2 text-sm font-medium hover:bg-red-600 transition-colors"
+                >
+                  Yes, reset
+                </button>
+                <button
+                  onClick={() => setConfirmReset(false)}
+                  className="flex-1 bg-white border border-gray-200 text-gray-600 rounded-xl py-2 text-sm font-medium hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+
           <div className="space-y-3 mb-6">
             {Array.from({ length: selectedNovena.days }, (_, i) => {
               const day = i + 1;
@@ -253,6 +430,8 @@ export default function Novenas() {
             })}
           </div>
         </div>
+        {/* Particle keyframe */}
+        <style>{`@keyframes novena-particle{0%{transform:translate(-50%,-50%) rotate(var(--angle)) translateX(0px) scale(1);opacity:1;}60%{opacity:.9;}100%{transform:translate(-50%,-50%) rotate(var(--angle)) translateX(56px) scale(0);opacity:0;}}`}</style>
         <Navigation />
       </div>
     );

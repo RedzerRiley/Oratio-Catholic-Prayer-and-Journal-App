@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { BookOpen, Sparkles, Cross, BookHeart, Sun, Moon, MessageCircleHeart, UserCircle, Church, CheckCircle, X } from 'lucide-react';
+import { BookOpen, Sparkles, Cross, BookHeart, Sun, Moon, MessageCircleHeart, UserCircle, Church, CheckCircle, X, HelpCircle } from 'lucide-react';
 import { Navigation } from '../components/Navigation';
 import { useAuth } from '../contexts/AuthContext';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { bibleQuotes } from '../data/prayers';
+import WhatsNewPopup from '../components/WhatsNewPopup';
 
 type AttendanceRecord = {
   date: string; // YYYY-MM-DD
@@ -48,6 +49,7 @@ export default function Home() {
   const [attendance, setAttendance] = useState<AttendanceRecord[]>([]);
   const [todayAnswered, setTodayAnswered] = useState(false);
   const [loadingAttendance, setLoadingAttendance] = useState(true);
+  const [showWhatsNew, setShowWhatsNew] = useState(false);
 
   const sundays = getLastSundays();
   const today = getTodayStr();
@@ -146,15 +148,24 @@ export default function Home() {
                 <h1 className="text-2xl font-serif">{displayName} </h1>
               </div>
             </div>
-            <Link to="/profile" className="flex-shrink-0">
-              {photoURL ? (
-                <img src={photoURL} alt="Profile" className="w-12 h-12 rounded-full border-2 border-white/40 object-cover shadow-md" />
-              ) : (
-                <div className="w-12 h-12 rounded-full border-2 border-white/40 bg-white/20 flex items-center justify-center shadow-md">
-                  <UserCircle className="w-7 h-7 text-white" />
-                </div>
-              )}
-            </Link>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowWhatsNew(true)}
+                className="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors"
+                aria-label="What's new"
+              >
+                <HelpCircle className="w-5 h-5 text-white" />
+              </button>
+              <Link to="/profile" className="flex-shrink-0">
+                {photoURL ? (
+                  <img src={photoURL} alt="Profile" className="w-12 h-12 rounded-full border-2 border-white/40 object-cover shadow-md" />
+                ) : (
+                  <div className="w-12 h-12 rounded-full border-2 border-white/40 bg-white/20 flex items-center justify-center shadow-md">
+                    <UserCircle className="w-7 h-7 text-white" />
+                  </div>
+                )}
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -204,7 +215,10 @@ export default function Home() {
         {/* Church Attendance Tracker */}
         <button
           onClick={() => setDialog('prompt')}
-          className="w-full bg-white rounded-2xl shadow-md p-5 mb-6 text-left active:scale-98 transition-all hover:shadow-lg"
+          disabled={!isSunday()}
+          className={`w-full bg-white rounded-2xl shadow-md p-5 mb-6 text-left transition-all ${
+            isSunday() ? 'active:scale-98 hover:shadow-lg' : 'cursor-default'
+          }`}
         >
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
@@ -213,7 +227,9 @@ export default function Home() {
               </div>
               <div>
                 <h3 className="font-semibold text-gray-800">Mass Attendance</h3>
-                <p className="text-xs text-gray-500">Tap to log · Last 8 Sundays</p>
+                <p className="text-xs text-gray-500">
+                  {isSunday() ? 'Tap to log · Last 8 Sundays' : 'Log available on Sundays · Last 8 Sundays'}
+                </p>
               </div>
             </div>
             {streak > 0 && (
@@ -373,6 +389,8 @@ export default function Home() {
           </div>
         </div>
       )}
+
+      {showWhatsNew && <WhatsNewPopup onClose={() => setShowWhatsNew(false)} />}
 
       <Navigation />
     </div>
