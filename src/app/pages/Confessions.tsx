@@ -168,8 +168,6 @@ export default function Confessions() {
     return true;
   });
 
-  const pendingCount = entries.filter(e => !e.confessed).length;
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white pb-20">
       {/* Header */}
@@ -183,23 +181,7 @@ export default function Confessions() {
         </div>
       </div>
 
-      <div className="max-w-md mx-auto px-6 -mt-4">
-        {/* Stats Card */}
-        <div className="bg-white rounded-2xl shadow-lg p-5 mb-6">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-gray-600 mb-1">To Confess</p>
-              <p className="text-3xl font-bold text-purple-600">{pendingCount}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-600 mb-1">Confessed</p>
-              <p className="text-3xl font-bold text-green-600">
-                {entries.filter(e => e.confessed).length}
-              </p>
-            </div>
-          </div>
-        </div>
-
+      <div className="max-w-md mx-auto px-6 mt-6">
         {/* Action Buttons */}
         <div className="flex gap-3 mb-6">
           <button
@@ -224,13 +206,11 @@ export default function Confessions() {
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`flex-1 py-2 rounded-xl text-sm font-medium transition-colors ${
-                filter === f ? 'bg-purple-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'
+              className={`flex-1 py-2 rounded-xl text-sm font-medium transition-colors capitalize ${
+                filter === f ? 'bg-purple-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100 shadow-sm'
               }`}
             >
-              {f === 'all' && `All (${entries.length})`}
-              {f === 'pending' && `Pending (${pendingCount})`}
-              {f === 'confessed' && `Confessed (${entries.filter(e => e.confessed).length})`}
+              {f}
             </button>
           ))}
         </div>
