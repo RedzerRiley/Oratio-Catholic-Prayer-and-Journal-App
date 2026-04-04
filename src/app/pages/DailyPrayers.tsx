@@ -1,4 +1,5 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
+import { useLocation } from 'react-router';
 import { Navigation } from '../components/Navigation';
 import { dailyPrayers } from '../data/prayers';
 import { Search, ChevronRight, BookMarked, X, BookOpen } from 'lucide-react';
@@ -8,6 +9,7 @@ const categoryColors: { [key: string]: string } = {
   Daily: 'bg-green-100 text-green-700',
   Marian: 'bg-pink-100 text-pink-700',
   Protection: 'bg-amber-100 text-amber-700',
+  Chaplet: 'bg-red-100 text-red-700',
 };
 
 // Soft bell chime via Web Audio API
@@ -41,6 +43,17 @@ export default function DailyPrayers() {
   const amenRef = useRef<HTMLButtonElement>(null);
   const particleIdRef = useRef(0);
 
+  const location = useLocation();
+
+  // Auto-open a prayer if navigated here with state (e.g. from Novenas chaplet button)
+  useEffect(() => {
+    const prayerId = (location.state as any)?.openPrayer;
+    if (prayerId) {
+      const prayer = dailyPrayers.find(p => p.id === prayerId);
+      if (prayer) setSelectedPrayer(prayer);
+    }
+  }, []);
+
   const handleAmen = useCallback(() => {
     if (amenPopping) return;
     setAmenPopping(true);
@@ -64,7 +77,7 @@ export default function DailyPrayers() {
     }, 700);
   }, [amenPopping]);
 
-  const categories = ['All', 'Essential', 'Daily', 'Marian', 'Protection'];
+  const categories = ['All', 'Essential', 'Daily', 'Marian', 'Protection', 'Chaplet'];
 
   const filteredPrayers = dailyPrayers.filter((prayer) => {
     const matchesSearch =

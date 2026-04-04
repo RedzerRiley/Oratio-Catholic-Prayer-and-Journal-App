@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Navigation } from '../components/Navigation';
-import { BookHeart, Plus, Check, Trash2, AlertCircle } from 'lucide-react';
+import { BookHeart, Plus, Check, Trash2, AlertCircle, FileText, ChevronDown, ChevronUp } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../components/ui/dialog';
 import { Button } from '../components/ui/button';
 import {
@@ -103,6 +103,7 @@ export default function Confessions() {
   const [newSin, setNewSin] = useState('');
   const [newCategory, setNewCategory] = useState('Other');
   const [filter, setFilter] = useState<'all' | 'pending' | 'confessed'>('all');
+  const [showGuideDialog, setShowGuideDialog] = useState(false);
 
   // Real-time Firestore listener
   useEffect(() => {
@@ -197,6 +198,13 @@ export default function Confessions() {
           >
             <AlertCircle className="w-5 h-5" />
             Examination
+          </button>
+          <button
+            onClick={() => setShowGuideDialog(true)}
+            className="flex-1 bg-white text-purple-600 rounded-2xl py-4 shadow-md hover:shadow-lg transition-all active:scale-98 flex items-center justify-center gap-2 font-semibold"
+          >
+            <FileText className="w-5 h-5" />
+            Guide
           </button>
         </div>
 
@@ -362,6 +370,62 @@ export default function Confessions() {
           <DialogFooter className="mt-6">
             <Button
               onClick={() => setShowExaminationDialog(false)}
+              className="w-full bg-purple-600 hover:bg-purple-700"
+            >
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Confession Guide Dialog */}
+      <Dialog open={showGuideDialog} onOpenChange={setShowGuideDialog}>
+        <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-serif text-purple-800">A Guide to Confession</DialogTitle>
+          </DialogHeader>
+
+          <div className="mt-4 space-y-6">
+
+            {/* Steps */}
+            <div>
+              <h3 className="font-semibold text-gray-800 mb-3 text-sm uppercase tracking-widest text-purple-700">How to go to Confession</h3>
+              <div className="space-y-4">
+               {[
+  "You always have the option to go to confession anonymously, that is, behind a screen or face to face, if you so desire.",
+  "After the priest greets you in the name of Christ, make the sign of the cross. He may choose to recite a reading from Scripture, after which you say: \"Bless me Father for I have sinned. It has been (state how long) since my last confession. These are my sins.\"",
+  "Tell your sins simply and honestly to the priest. You might even want to discuss the circumstances and the root causes of your sins and ask the priest for advice or direction.",
+  "Listen to the advice the priest gives you and accept the penance from him. Then make an Act of Contrition for your sins.",
+  "The priest will then dismiss you with the words of praise: \"Give thanks to the Lord for He is good.\" You respond: \"For His mercy endures forever.\" The priest will then conclude with: \"The Lord has freed you from your sins. Go in peace.\" And you respond: \"Thanks be to God.\"",
+  "Spend some time with Our Lord thanking and praising Him for the gift of His mercy. Try to perform your penance as soon as possible.",
+].map((step, i) => (
+  <div key={i} className="flex gap-3">
+    <div className="w-7 h-7 rounded-full bg-purple-100 text-purple-700 font-bold text-sm flex items-center justify-center flex-shrink-0 mt-0.5">
+      {i + 1}
+    </div>
+    <p className="text-sm text-gray-700 leading-relaxed">{step}</p>
+  </div>
+))}
+              </div>
+            </div>
+
+            {/* Prayer Before Confession */}
+            <div className="bg-purple-50 border border-purple-100 rounded-2xl p-5">
+              <h3 className="font-semibold text-purple-800 mb-3 text-sm uppercase tracking-widest">Prayer Before Confession</h3>
+              <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{`O most merciful God! Prostrate at your feet, I implore your forgiveness. I sincerely desire to leave all my evil ways and to confess my sins with all sincerity to you and to your priest. I am a sinner, have mercy on me, O Lord. Give me a lively faith and a firm hope in the Passion of my Redeemer. Give me, for your mercy's sake, a sorrow for having offended so good a God. Mary, my mother, refuge of sinners, pray for me that I may make a good confession. Amen.`}</p>
+            </div>
+
+            {/* Act of Contrition */}
+            <div className="bg-amber-50 border border-amber-100 rounded-2xl p-5">
+              <h3 className="font-semibold text-amber-800 mb-3 text-sm uppercase tracking-widest">An Act of Contrition</h3>
+              <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{`Oh my God, I am sorry for my sins with all my heart. In choosing to do wrong and failing to do good, I have sinned against you whom I should love above all things. I firmly intend, with your help, to do penance, to sin no more, and to avoid whatever leads me to sin. Our Savior Jesus Christ suffered and died for us. In His name, my God, have mercy. Amen.`}</p>
+            </div>
+
+          </div>
+
+          <DialogFooter className="mt-6">
+            <Button
+              onClick={() => setShowGuideDialog(false)}
               className="w-full bg-purple-600 hover:bg-purple-700"
             >
               Close

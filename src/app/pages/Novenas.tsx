@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback } from 'react';
 import { Navigation } from '../components/Navigation';
+import { useNavigate } from 'react-router';
 import { novenas, Novena } from '../data/prayers';
 import { Cross, Calendar, Heart, ChevronRight, BookOpen, CheckCircle, Lock, RotateCcw } from 'lucide-react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
@@ -112,6 +113,7 @@ const COMPLETE_COLORS = ['#f59e0b', '#fbbf24', '#a3e635', '#ffffff', '#86efac', 
 
 // ─── Component ───────────────────────────────────────────────
 export default function Novenas() {
+  const navigate = useNavigate();
   const [selectedNovena, setSelectedNovena] = useState<Novena | null>(null);
   const [screen, setScreen] = useState<Screen>('list');
   const [activeDay, setActiveDay] = useState(1);
@@ -357,6 +359,22 @@ export default function Novenas() {
             </div>
             <p className="text-gray-700">{selectedNovena.intention}</p>
           </div>
+
+          {selectedNovena.id === 'divine-mercy' && (
+            <button
+              onClick={() => navigate('/daily-prayers', { state: { openPrayer: 'divine-mercy-chaplet' } })}
+              className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl p-4 mb-6 flex items-center gap-3 shadow-md hover:shadow-lg active:scale-98 transition-all"
+            >
+              <div className="bg-white/20 rounded-xl p-2 flex-shrink-0">
+                <BookOpen className="w-5 h-5 text-white" />
+              </div>
+              <div className="text-left">
+                <p className="font-semibold text-sm">Pray the Chaplet of Divine Mercy</p>
+                <p className="text-red-100 text-xs">After each day</p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-white/70 ml-auto flex-shrink-0" />
+            </button>
+          )}
 
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-semibold text-gray-800">Your Progress</h3>

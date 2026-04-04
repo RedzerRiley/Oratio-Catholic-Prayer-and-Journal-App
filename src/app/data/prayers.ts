@@ -87,6 +87,49 @@ Let us pray: Pour forth, we beseech Thee, O Lord, Thy grace into our hearts; tha
     category: 'Essential',
     text: `O my God, I am heartily sorry for having offended Thee, and I detest all my sins because of thy just punishments, but most of all because they offend Thee, my God, who art all good and deserving of all my love. I firmly resolve with the help of Thy grace to sin no more and to avoid the near occasion of sin. Amen.`,
   },
+  {
+    id: 'divine-mercy-chaplet',
+    title: 'Chaplet of Divine Mercy',
+    latin: 'Coronna della Divina Misericordia',
+    category: 'Chaplet',
+    text: `STEP 1 — Sign of the Cross
+Using a regular Rosary, begin at the cross by making the Sign of the Cross.
+
+✦ Optional Opening Prayer:
+You expired, Jesus, but the source of life gushed forth for souls, and the ocean of mercy opened up for the whole world. O Fount of Life, unfathomable Divine Mercy, envelop the whole world and empty Yourself out upon us.
+
+✦ Repeat three times:
+O Blood and Water, which gushed forth from the Heart of Jesus as a fountain of Mercy for us, I trust in You!
+
+────────────────────────────
+STEP 2 — On the three introductory beads, pray:
+• Our Father
+• Hail Mary
+• Apostles' Creed
+
+────────────────────────────
+STEP 3 — Opening prayer of each decade
+(Pray on the large Our Father bead before each decade)
+
+Eternal Father, I offer You the Body and Blood, Soul and Divinity of Your dearly beloved Son, Our Lord Jesus Christ, in atonement for our sins and those of the whole world.
+
+────────────────────────────
+STEP 4 — Each of the 10 Hail Mary beads in a decade
+
+For the sake of His sorrowful Passion, have mercy on us and on the whole world.
+
+✦ Repeat Steps 3 and 4 for all 5 decades.
+
+────────────────────────────
+STEP 5 — Closing prayer (after all 5 decades, repeat 3 times)
+
+Holy God, Holy Mighty One, Holy Immortal One, have mercy on us and on the whole world.
+
+✦ Optional Closing Prayer:
+Eternal God, in whom mercy is endless and the treasury of compassion inexhaustible, look kindly upon us, and increase Your mercy in us, that in difficult moments, we might not despair nor become despondent, but with great confidence, submit ourselves to Your holy will, which is Love and Mercy itself.
+
+Amen.`,
+  },
 ];
 
 // ─────────────────────────────────────────────────────────────
@@ -120,9 +163,71 @@ export const novenas: Novena[] = [
     patron: 'Jesus Christ',
     intention: 'For the souls in purgatory and sinners',
     image: '/images/divine-mercy.png',
-    prayers: Array.from({ length: 9 }, (_, i) =>
-      `Eternal Father, I offer You the Body and Blood, Soul and Divinity of Your dearly beloved Son, Our Lord Jesus Christ, in atonement for our sins and those of the whole world. For the sake of His sorrowful Passion, have mercy on us and on the whole world.\n\n(Day ${i + 1} intention) Eternal God, in whom mercy is endless and the treasury of compassion inexhaustible, look kindly upon us and increase Your mercy in us, that in difficult moments we might not despair nor become despondent, but with great confidence submit ourselves to Your holy will, which is Love and Mercy itself. Amen.`
-    ),
+    prayers: [
+      `DAY 1 — All Mankind, Especially Sinners
+
+Today bring to Me all mankind, especially all sinners, and immerse them in the ocean of My mercy. In this way you will console Me in the bitter grief into which the loss of souls plunges Me.
+
+✦ Pray the Chaplet of Divine Mercy using the guide found in Daily Prayers.
+
+Eternal Father, I offer You the Body and Blood, Soul and Divinity of Your dearly beloved Son, Our Lord Jesus Christ, in atonement for our sins and those of the whole world. For the sake of His sorrowful Passion, have mercy on us and on the whole world. Amen.`,
+      `DAY 2 — Souls of Priests and Religious
+
+Today bring to Me the souls of priests and religious, and immerse them in My unfathomable mercy. It was they who gave Me the strength to endure My bitter Passion.
+
+✦ Pray the Chaplet of Divine Mercy using the guide found in Daily Prayers.
+
+Eternal Father, I offer You the Body and Blood, Soul and Divinity of Your dearly beloved Son, Our Lord Jesus Christ, in atonement for our sins and those of the whole world. For the sake of His sorrowful Passion, have mercy on us and on the whole world. Amen.`,
+      `DAY 3 — All Devout and Faithful Souls
+
+Today bring to Me all devout and faithful souls, and immerse them in the ocean of My mercy. These souls brought Me consolation on the Way of the Cross.
+
+✦ Pray the Chaplet of Divine Mercy using the guide found in Daily Prayers.
+
+Eternal Father, I offer You the Body and Blood, Soul and Divinity of Your dearly beloved Son, Our Lord Jesus Christ, in atonement for our sins and those of the whole world. For the sake of His sorrowful Passion, have mercy on us and on the whole world. Amen.`,
+      `DAY 4 — Those Who Do Not Believe and Those Who Do Not Yet Know Jesus
+
+Today bring to Me the pagans and those who do not yet know Me. I was thinking also of them during My bitter Passion, and their future zeal comforted My Heart.
+
+✦ Pray the Chaplet of Divine Mercy using the guide found in Daily Prayers.
+
+Eternal Father, I offer You the Body and Blood, Soul and Divinity of Your dearly beloved Son, Our Lord Jesus Christ, in atonement for our sins and those of the whole world. For the sake of His sorrowful Passion, have mercy on us and on the whole world. Amen.`,
+      `DAY 5 — Heretics and Schismatics
+
+Today bring to Me the souls of those who have separated themselves from My Church, and immerse them in the ocean of My mercy. During My bitter Passion they tore at My Body and Heart, that is, My Church.
+
+✦ Pray the Chaplet of Divine Mercy using the guide found in Daily Prayers.
+
+Eternal Father, I offer You the Body and Blood, Soul and Divinity of Your dearly beloved Son, Our Lord Jesus Christ, in atonement for our sins and those of the whole world. For the sake of His sorrowful Passion, have mercy on us and on the whole world. Amen.`,
+      `DAY 6 — The Meek and Humble Souls and Children
+
+Today bring to Me the meek and humble souls and the souls of little children, and immerse them in My mercy. These souls most closely resemble My Heart.
+
+✦ Pray the Chaplet of Divine Mercy using the guide found in Daily Prayers.
+
+Eternal Father, I offer You the Body and Blood, Soul and Divinity of Your dearly beloved Son, Our Lord Jesus Christ, in atonement for our sins and those of the whole world. For the sake of His sorrowful Passion, have mercy on us and on the whole world. Amen.`,
+      `DAY 7 — Souls Who Venerate and Glorify Divine Mercy
+
+Today bring to Me the souls who especially venerate and glorify My mercy, and immerse them in My mercy. These souls sorrowed most over My Passion and entered most deeply into My spirit.
+
+✦ Pray the Chaplet of Divine Mercy using the guide found in Daily Prayers.
+
+Eternal Father, I offer You the Body and Blood, Soul and Divinity of Your dearly beloved Son, Our Lord Jesus Christ, in atonement for our sins and those of the whole world. For the sake of His sorrowful Passion, have mercy on us and on the whole world. Amen.`,
+      `DAY 8 — Souls in Purgatory
+
+Today bring to Me the souls that are in the prison of Purgatory, and immerse them in the abyss of My mercy. Let the torrents of My Blood cool down their scorching flames. All these souls are greatly loved by Me.
+
+✦ Pray the Chaplet of Divine Mercy using the guide found in Daily Prayers.
+
+Eternal Father, I offer You the Body and Blood, Soul and Divinity of Your dearly beloved Son, Our Lord Jesus Christ, in atonement for our sins and those of the whole world. For the sake of His sorrowful Passion, have mercy on us and on the whole world. Amen.`,
+      `DAY 9 — Souls Who Have Become Lukewarm
+
+Today bring to Me the souls who have become lukewarm, and immerse them in the abyss of My mercy. These souls wound My Heart most painfully. My Heart suffered the most dreadful loathing in the Garden of Olives because of them.
+
+✦ Pray the Chaplet of Divine Mercy using the guide found in Daily Prayers.
+
+Eternal Father, I offer You the Body and Blood, Soul and Divinity of Your dearly beloved Son, Our Lord Jesus Christ, in atonement for our sins and those of the whole world. For the sake of His sorrowful Passion, have mercy on us and on the whole world. Amen.`,
+    ],
   },
   {
     id: 'sacred-heart',
