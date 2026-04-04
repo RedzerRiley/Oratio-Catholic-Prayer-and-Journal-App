@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Navigation } from '../components/Navigation';
-import { BookHeart, Plus, Check, Trash2, AlertCircle, FileText, ChevronDown, ChevronUp } from 'lucide-react';
+import { BookHeart, Plus, Check, Trash2, AlertCircle, HelpCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../components/ui/dialog';
 import { Button } from '../components/ui/button';
 import {
@@ -201,10 +201,11 @@ export default function Confessions() {
           </button>
           <button
             onClick={() => setShowGuideDialog(true)}
-            className="flex-1 bg-white text-purple-600 rounded-2xl py-4 shadow-md hover:shadow-lg transition-all active:scale-98 flex items-center justify-center gap-2 font-semibold"
+            aria-label="Guide to Confession"
+            title="Guide to Confession"
+            className="w-14 h-14 flex-shrink-0 bg-white text-purple-600 rounded-full shadow-md hover:shadow-lg transition-all active:scale-98 flex items-center justify-center"
           >
-            <FileText className="w-5 h-5" />
-            Guide
+            <HelpCircle className="w-6 h-6" />
           </button>
         </div>
 
